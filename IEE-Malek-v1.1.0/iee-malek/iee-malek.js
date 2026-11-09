@@ -529,6 +529,7 @@
   /* When the APP shows something new (feedback, a Next button) and it lands behind Malek,
      scroll it into the clear. The page always has room for this (see --iee-m-reserve). */
   IEELearningBuddy.prototype.ensureClear = function () {
+    return; // disabled for the Social Studies site: auto-scrolling the page made questions jump away from students
     if (!this.root.isConnected) return;
     var vw = global.innerWidth, vh = global.innerHeight, self = this;
     var parts = this.root.querySelectorAll('.iee-m-bubble:not([hidden]), .iee-m-body:not([hidden]) .iee-m-figure, .iee-m-avatar:not([hidden])');
@@ -597,7 +598,7 @@
   IEELearningBuddy.prototype.minimize = function () {
     this.open = false; this.core.store.set('minimized', true); this.core.voice.cancel();
     this.applyOpen(); this.layout(); this.labels();
-    try { this.avatar.focus(); } catch (e) { /* ignore */ }
+    try { this.avatar.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
   };
   IEELearningBuddy.prototype.restore = function () {
     this.open = true; this.core.store.set('minimized', false);

@@ -963,7 +963,7 @@ const REDUCED=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').
 function toast(msg){const t=h(`<div class="toast" role="status">${esc(msg)}</div>`);document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
 function confirmBox(title,body,okLabel,onOk){const d=h(`<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgT"><div class="box"><h3 id="dlgT">${esc(title)}</h3><p class="muted">${esc(body)}</p><div class="row"><button class="btn ghost" data-x>Cancel</button><button class="btn ox" data-ok>${esc(okLabel)}</button></div></div></div>`);
  d.addEventListener('click',e=>{if(e.target===d||e.target.closest('[data-x]'))d.remove();if(e.target.closest('[data-ok]')){d.remove();onOk()}});
- document.body.appendChild(d);$('[data-ok]',d).focus()}
+ document.body.appendChild(d);$('[data-ok]',d).focus({preventScroll:true})}
 const norm=s=>String(s).toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
 
 /* ============ data assembly ============ */
@@ -1301,8 +1301,8 @@ function viewInfographics(n){
  const zoom=()=>{const lb=h(`<div class="lightbox" role="dialog" aria-modal="true" aria-label="Full-size infographic"><div class="lbtop"><span>${esc(ig.title)}</span><button data-z="-" aria-label="Zoom out">−</button><button data-z="+" aria-label="Zoom in">+</button><button data-x aria-label="Close">✕</button></div><div class="sc"><img src="${ig.file}" alt="${esc(ig.alt)}"></div></div>`);
   let z=100;const im=$('img',lb);const apply=()=>{im.style.width=z+'%';$('.sc',lb).style.placeItems=z>100?'start':'center'};
   lb.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.x!=null)close();if(b.dataset.z==='+'){z=Math.min(400,z+50);apply()}if(b.dataset.z==='-'){z=Math.max(100,z-50);apply()}});
-  const kh=e=>{if(e.key==='Escape')close()};const close=()=>{lb.remove();document.removeEventListener('keydown',kh);frame.focus()};
-  document.addEventListener('keydown',kh);document.body.appendChild(lb);$('[data-x]',lb).focus()};
+  const kh=e=>{if(e.key==='Escape')close()};const close=()=>{lb.remove();document.removeEventListener('keydown',kh);frame.focus({preventScroll:true})};
+  document.addEventListener('keydown',kh);document.body.appendChild(lb);$('[data-x]',lb).focus({preventScroll:true})};
  frame.onclick=zoom;frame.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();zoom()}};$('[data-zoom]',v).onclick=zoom;
  cleanup=()=>{TTS_CLEAR.delete(hide)};
 }
@@ -1380,7 +1380,7 @@ function runSet(set){
    if(it.resp&&exam)setNext();
    if(done){inp.disabled=true;showFb(it.score===1,'Accepted answer: '+esc(q.ans)+'. '+esc(q.x||''));setNext()}
    else if(!exam){primary.onclick=()=>{it.resp=inp.value;it.score=grade(inp.value);recordQ(q,it.score);save();inp.disabled=true;showFb(it.score===1,'Accepted answer: '+esc(q.ans)+'. '+esc(q.x||''));paintSegs();setNext()}}
-   setTimeout(()=>inp.focus(),50);
+   setTimeout(()=>inp.focus({preventScroll:true}),50);
   }
   else if(q.t==='match'){
    const lefts=q.pairs.map(p=>p[0]),rights=it.mOrder;const cols=['#9A3324','#2D5B55','#B48A2C','#56652A','#5A4636','#3D4F7A','#7A2E5A','#1C1A16'];
@@ -1414,7 +1414,7 @@ function runSet(set){
    else primary.onclick=()=>{showModel();primary.textContent='Submit self-check';primary.disabled=false;
     primary.onclick=()=>{const ticks=$$('[data-pt]',after).map(c=>c.checked);it.ticks=ticks;it.resp=ta.value;it.score=ticks.filter(Boolean).length/ticks.length;recordQ(q,it.score);save();$$('[data-pt]',after).forEach(c=>c.disabled=true);
      showFb(true,`You covered ${ticks.filter(Boolean).length} of ${ticks.length} key points (${pct(it.score)}%). This counts toward your accuracy.`,true);paintSegs();setNext()}};
-   setTimeout(()=>ta.focus(),50);
+   setTimeout(()=>ta.focus({preventScroll:true}),50);
   }
  }
  function finish(){
@@ -1486,7 +1486,7 @@ function viewGame(){
    else{st.streak=0;st.lives--;$$('.lives span',panel)[st.lives]?.classList.add('off')}
    save();
    const nx=h(`<div class="fb ${ok?'ok':'no'}"><b>${ok?'Charted!':i<0?'Out of time.':'Wrong course.'}</b>${ok?'':'Answer: '+esc(q.t==='tf'?(q.a?'True':'False'):q.o[q.a])+'. '}${esc(q.x||'')}</div>`);
-   $('.gq',panel).appendChild(nx);const c=h(`<button class="btn" style="width:100%;margin-top:12px" data-primary>Continue →</button>`);$('.gq',panel).appendChild(c);c.focus();
+   $('.gq',panel).appendChild(nx);const c=h(`<button class="btn" style="width:100%;margin-top:12px" data-primary>Continue →</button>`);$('.gq',panel).appendChild(c);c.focus({preventScroll:true});
    if(!ok)st.pool.splice(st.r,1);  // draw a fresh question for this stop next time
    c.onclick=round};
   btns.forEach((b,i)=>b.onclick=()=>answer(i));
